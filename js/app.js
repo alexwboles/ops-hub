@@ -24,6 +24,7 @@
   });
 
   var sum = d.PRODUCTS.reduce(function (a, p) { return a + p.price; }, 0);
+  var savings = d.BUNDLE.savings ? " You save $" + d.BUNDLE.savings + "/mo." : "";
   document.getElementById("bundle-math").textContent =
-    "Bought separately: $" + sum + "/mo. As \"" + d.BUNDLE.name + "\": " + d.BUNDLE.pitch + ".";
+    "Bought separately: $" + sum + "/mo. As \"" + d.BUNDLE.name + "\": " + d.BUNDLE.pitch + "." + savings;
 })();
