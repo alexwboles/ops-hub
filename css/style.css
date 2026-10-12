@@ -23,3 +23,41 @@ h2 { margin:2.2rem 0 .8rem; font-size:1.35rem; }
 .flowstep p { margin:0; color:var(--muted); font-size:.93rem; }
 .bundle { background:#eef0ff; border:1px solid #c9cdf7; border-radius:.9rem; padding:1.25rem 1.4rem; }
 footer { text-align:center; color:var(--muted); font-size:.85rem; padding:2rem 1rem 2.5rem; }
+
+/* --- pain-point finder ----------------------------------------------------- */
+.picks { display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:.9rem; }
+.pick-btn {
+  padding:.65rem 1.1rem; border:2px solid var(--line); background:#fff;
+  font-size:.95rem; font-weight:600; cursor:pointer; border-radius:0; color:var(--ink);
+}
+.pick-btn:hover { border-color:var(--accent); }
+.pick-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.pain-result { color:var(--muted); font-size:.95rem; max-width:46rem; }
+.lede { color:var(--muted); margin:.2rem 0 1.2rem; }
+.group {
+  display:inline-block; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--accent); font-weight:700; margin-bottom:.35rem;
+}
+.card.recommended { border:2px solid var(--accent); }
+
+/* --- toolbar ---------------------------------------------------------------- */
+.toolbar { display:flex; gap:.6rem; margin-bottom:.6rem; flex-wrap:wrap; }
+.toolbar input[type="search"], .toolbar select {
+  padding:.6rem .85rem; border:1px solid var(--line); font-size:.95rem;
+  border-radius:0; background:#fff; color:var(--ink);
+}
+.toolbar input[type="search"] { flex:1; min-width:13rem; }
+.result-count { color:var(--muted); font-size:.85rem; margin:0 0 1.1rem; }
+
+/* --- build-your-bundle ------------------------------------------------------- */
+.pick-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:.5rem; margin-bottom:1.1rem; }
+.pick {
+  display:flex; align-items:center; gap:.6rem; padding:.6rem .8rem;
+  border:1px solid var(--line); background:#fff; cursor:pointer; font-size:.92rem;
+}
+.pick input { width:1.05rem; height:1.05rem; accent-color:var(--accent); }
+.pick-price { margin-left:auto; color:var(--muted); font-size:.85rem; }
+.quote { border:2px solid var(--line); background:#fff; padding:1.1rem 1.3rem; }
+.quote-line { font-size:.98rem; margin-bottom:.35rem; }
+.quote-verdict { font-size:1rem; font-weight:600; margin-top:.7rem; }
+.quote-verdict.bundle-wins { color:var(--accent); }

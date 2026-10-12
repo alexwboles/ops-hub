@@ -12,11 +12,28 @@
   <p>Systematize the work, staff the team, tame the inbox — ten independent tools, one calm back office.</p>
 </header>
 <main class="wrap">
+  <h2>What hurts?</h2>
+  <p class="lede">Pick the pain — the hub points at the tools built to fix it.</p>
+  <div class="picks" id="pain-picks"></div>
+  <p class="pain-result" id="pain-result" aria-live="polite"></p>
+
   <h2>The products</h2>
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="Search products, features…" aria-label="Search products">
+    <select id="group-filter" aria-label="Filter by group">
+      <option value="all">All groups</option>
+    </select>
+  </div>
+  <p class="result-count" id="result-count" aria-live="polite"></p>
   <div class="grid" id="cards"></div>
 
   <h2>How they connect</h2>
   <div class="flow" id="flow"></div>
+
+  <h2>Build your bundle</h2>
+  <p class="lede">Check the products you'd actually buy. The hub quotes you against the Back-Office OS price — honestly, including when the bundle loses.</p>
+  <div class="pick-list" id="pick-list"></div>
+  <div class="quote" id="quote" aria-live="polite"></div>
 
   <h2>The bundle idea</h2>
   <div class="bundle">

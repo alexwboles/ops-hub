@@ -74,5 +74,50 @@ if (created.filter(c => c[0] === 'flow').length !== 4) process.exit(1);
 console.log('ok');
 " >/dev/null && ok "flow6: app.js renders 10 cards + 4 flow steps" || bad "flow6"
 
+# Flow 7: quotePlan — bundle quote is honest both ways
+node -e "
+const d = require('$DIR/js/data.js');
+const all = d.PRODUCTS.map(p => p.slug);
+const q1 = d.quotePlan(all);
+if (q1.count !== 10 || q1.separate !== 203) process.exit(1);
+if (q1.bundleApplies !== true || q1.effective !== 139 || q1.savings !== 64) process.exit(1);
+const q2 = d.quotePlan(['sopforge-ai', 'signpilot-ai']);
+if (q2.bundleApplies !== false || q2.effective !== 30 || q2.savings !== 0) process.exit(1);
+const q3 = d.quotePlan(['sopforge-ai', 'sopforge-ai', 'nope']);
+if (q3.count !== 1 || q3.separate !== 15) process.exit(1);
+const q4 = d.quotePlan([]);
+if (q4.count !== 0 || !/at least one/.test(q4.verdict)) process.exit(1);
+console.log('ok');
+" >/dev/null && ok "flow7: quotePlan — bundle wins on all-ten, loses on two cheap picks" || bad "flow7"
+
+# Flow 8: recommend — pain-point finder maps to real products
+node -e "
+const d = require('$DIR/js/data.js');
+if (d.PAINS.length !== 8) process.exit(1);
+d.PAINS.forEach(pain => {
+  const r = d.recommend(pain.key);
+  if (!r.pain || r.products.length === 0) process.exit(1);
+  r.products.forEach(p => { if (!d.getProduct(p.slug)) process.exit(1); });
+});
+const r = d.recommend('inbox');
+if (r.products[0].slug !== 'triagepilot-ai') process.exit(1);
+if (d.recommend('nope').products.length !== 0) process.exit(1);
+console.log('ok');
+" >/dev/null && ok "flow8: recommend — 8 pains resolve to real products" || bad "flow8"
+
+# Flow 9: searchProducts — text + group filtering
+node -e "
+const d = require('$DIR/js/data.js');
+if (d.searchProducts('', 'all').length !== 10) process.exit(1);
+if (d.searchProducts('', 'Money').length !== 2) process.exit(1);
+if (d.searchProducts('', 'Paperwork').length !== 4) process.exit(1);
+if (d.searchProducts('invoice', 'all').length < 1) process.exit(1);
+if (d.searchProducts('INVOICE', 'all').length !== d.searchProducts('invoice', 'all').length) process.exit(1);
+if (d.searchProducts('zzz-no-match', 'all').length !== 0) process.exit(1);
+if (d.groupOf('bizbrain-ai') !== 'Brain') process.exit(1);
+if (d.allGroups().join(',') !== 'Money,People,Paperwork,Brain') process.exit(1);
+console.log('ok');
+" >/dev/null && ok "flow9: searchProducts — text + group filtering" || bad "flow9"
+
 echo "--- e2e: $PASS passed, $FAIL failed ---"
 [ "$FAIL" -eq 0 ]

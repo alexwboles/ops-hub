@@ -150,5 +150,105 @@
     return "https://github.com/alexwboles/" + slug;
   }
 
-  return { PRODUCTS: PRODUCTS, FLOW: FLOW, BUNDLE: BUNDLE, repoUrl: repoUrl };
+  function bundlePrice() { return 139; }
+
+  /* Groups mirror the four FLOW steps: Money, People, Paperwork, Brain. */
+  var GROUPS = {
+    "invoicepilot-ai": "Money",
+    "cashflow-ai": "Money",
+    "hirewise-ai": "People",
+    "onboardpilot-ai": "People",
+    "shiftplan-ai": "People",
+    "sopforge-ai": "Paperwork",
+    "signpilot-ai": "Paperwork",
+    "bookpilot-ai": "Paperwork",
+    "triagepilot-ai": "Paperwork",
+    "bizbrain-ai": "Brain"
+  };
+
+  function groupOf(slug) { return GROUPS[slug] || "Other"; }
+
+  function allGroups() {
+    var out = [];
+    ["Money", "People", "Paperwork", "Brain"].forEach(function (g) { out.push(g); });
+    return out;
+  }
+
+  function getProduct(slug) {
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (PRODUCTS[i].slug === slug) return PRODUCTS[i];
+    }
+    return null;
+  }
+
+  /* --- Build-your-bundle quote ---------------------------------------------
+   * Pick any subset; the quote tells you whether Back-Office OS ($139/mo)
+   * beats buying your picks separately. Honest both ways.
+   */
+  function quotePlan(slugs) {
+    var picks = [];
+    var seen = {};
+    (slugs || []).forEach(function (slug) {
+      var p = getProduct(slug);
+      if (p && !seen[slug]) { seen[slug] = true; picks.push(p); }
+    });
+    var separate = picks.reduce(function (sum, p) { return sum + p.price; }, 0);
+    var price = bundlePrice();
+    var bundleCheaper = separate > price;
+    return {
+      picks: picks.map(function (p) { return p.slug; }),
+      count: picks.length,
+      separate: separate,
+      effective: bundleCheaper ? price : separate,
+      bundleApplies: bundleCheaper,
+      savings: bundleCheaper ? separate - price : 0,
+      verdict: picks.length === 0
+        ? "Pick at least one product to see your quote."
+        : bundleCheaper
+          ? "Take Back-Office OS — all ten for $139/mo beats your picks by $" + (separate - price) + "/mo."
+          : "Buy your picks separately for $" + separate + "/mo — the bundle only wins when your picks total more than $139."
+    };
+  }
+
+  /* --- Pain-point finder ----------------------------------------------------
+   * Plain-English pains, each mapped to the products built to fix them.
+   */
+  var PAINS = [
+    { key: "late-invoices", label: "Clients pay late", slugs: ["invoicepilot-ai", "cashflow-ai"] },
+    { key: "cash-crunch", label: "Cash flow surprises", slugs: ["cashflow-ai", "invoicepilot-ai"] },
+    { key: "hiring", label: "Hiring is chaos", slugs: ["hirewise-ai", "onboardpilot-ai"] },
+    { key: "scheduling", label: "Shift scheduling scrambles", slugs: ["shiftplan-ai", "onboardpilot-ai"] },
+    { key: "tribal-knowledge", label: "Knowledge lives in heads", slugs: ["sopforge-ai", "bizbrain-ai"] },
+    { key: "inbox", label: "Inbox overload", slugs: ["triagepilot-ai", "bizbrain-ai"] },
+    { key: "signing", label: "Chasing signatures", slugs: ["signpilot-ai", "bookpilot-ai"] },
+    { key: "repeat-questions", label: "Same questions, twice", slugs: ["bizbrain-ai", "sopforge-ai"] }
+  ];
+
+  function recommend(painKey) {
+    var pain = null;
+    PAINS.forEach(function (p) { if (p.key === painKey) pain = p; });
+    if (!pain) return { pain: null, products: [] };
+    return {
+      pain: pain,
+      products: pain.slugs.map(getProduct).filter(Boolean)
+    };
+  }
+
+  /* --- Search / filter ------------------------------------------------------ */
+  function searchProducts(query, group) {
+    var q = (query || "").trim().toLowerCase();
+    return PRODUCTS.filter(function (p) {
+      if (group && group !== "all" && groupOf(p.slug) !== group) return false;
+      if (!q) return true;
+      var hay = (p.name + " " + p.tagline + " " + p.features.join(" ")).toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+  }
+
+  return {
+    PRODUCTS: PRODUCTS, FLOW: FLOW, BUNDLE: BUNDLE, PAINS: PAINS,
+    repoUrl: repoUrl, bundlePrice: bundlePrice, groupOf: groupOf,
+    allGroups: allGroups, getProduct: getProduct, quotePlan: quotePlan,
+    recommend: recommend, searchProducts: searchProducts
+  };
 });

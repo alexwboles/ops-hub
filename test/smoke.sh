@@ -46,5 +46,10 @@ for s in bizbrain-ai bookpilot-ai cashflow-ai hirewise-ai invoicepilot-ai onboar
 done
 [ "$ALL_OK" -eq 1 ] && ok "README covers all 10 products" || bad "README product coverage"
 
+# new interactive sections present
+for id in pain-picks pain-result search group-filter result-count pick-list quote; do
+  grep -q "id=\"$id\"" "$DIR/index.html" && ok "index.html has #$id" || bad "index.html missing #$id"
+done
+
 echo "--- smoke: $PASS passed, $FAIL failed ---"
 [ "$FAIL" -eq 0 ]
