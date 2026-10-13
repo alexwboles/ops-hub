@@ -77,6 +77,50 @@
     renderCards();
   }
 
+  /* --- group tabs (synced with the group filter select) ---------------------- */
+  function groupCount(g) {
+    return d.PRODUCTS.filter(function (p) { return g === "all" || d.groupOf(p.slug) === g; }).length;
+  }
+
+  function syncTabs() {
+    var wrap = document.getElementById("group-tabs");
+    if (!wrap || typeof wrap.querySelectorAll !== "function") return;
+    var sel = document.getElementById("group-filter");
+    var cur = sel && typeof sel.value === "string" ? sel.value : "all";
+    var tabs = wrap.querySelectorAll(".group-tab");
+    Array.prototype.forEach.call(tabs, function (t) {
+      var active = t.getAttribute && t.getAttribute("data-group") === cur;
+      if (t.setAttribute) t.setAttribute("aria-selected", active ? "true" : "false");
+    });
+  }
+
+  function renderTabs() {
+    var wrap = document.getElementById("group-tabs");
+    if (!wrap || typeof wrap.appendChild !== "function") return;
+    wrap.innerHTML = "";
+    var groups = ["all"].concat(d.allGroups());
+    groups.forEach(function (g) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "group-tab";
+      if (b.setAttribute) {
+        b.setAttribute("role", "tab");
+        b.setAttribute("data-group", g);
+        b.setAttribute("aria-selected", g === "all" ? "true" : "false");
+      } else {
+        b["data-group"] = g;
+      }
+      b.textContent = (g === "all" ? "All ten" : g) + " (" + groupCount(g) + ")";
+      on(b, "click", function () {
+        var sel = document.getElementById("group-filter");
+        if (sel) sel.value = g;
+        renderCards();
+        syncTabs();
+      });
+      wrap.appendChild(b);
+    });
+  }
+
   /* --- search + group filter -------------------------------------------- */
   function renderFilters() {
     var sel = document.getElementById("group-filter");
@@ -87,7 +131,7 @@
       sel.appendChild(o);
     });
     on(document.getElementById("search"), "input", renderCards);
-    on(sel, "change", renderCards);
+    on(sel, "change", function () { renderCards(); syncTabs(); });
   }
 
   /* --- build-your-bundle quote ------------------------------------------- */
@@ -267,6 +311,7 @@
   (function init() {
     renderPains();
     renderFilters();
+    renderTabs();
     renderCards();
     renderFlow();
     renderPresets();

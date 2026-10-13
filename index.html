@@ -4,70 +4,130 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Back-Office OS — ops-hub</title>
+<meta name="description" content="Ten independent AI tools that run the inside of a small business: money, people, paperwork, and answers.">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header class="hero">
-  <h1>🗂️ Back-Office OS</h1>
-  <p>Systematize the work, staff the team, tame the inbox — ten independent tools, one calm back office.</p>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="wordmark" href="./">Back-Office OS</a>
+    <p class="topbar-meta">10 tools · 4 desks · <strong>$139/mo</strong> for the bundle</p>
+  </div>
 </header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker">Back-office OS</p>
+    <h1>The calm back office.</h1>
+    <p class="sub">Money in, people on board, paperwork handled, answers findable — ten independent tools that make a small business run itself.</p>
+    <div class="hero-stats">
+      <div class="hstat"><b>10</b><span>products</span></div>
+      <div class="hstat"><b>4</b><span>desks</span></div>
+      <div class="hstat"><b>$64</b><span>saved /mo on the bundle</span></div>
+    </div>
+  </div>
+</section>
+
 <main class="wrap">
-  <h2>What hurts?</h2>
-  <p class="lede">Pick the pain — the hub points at the tools built to fix it.</p>
-  <div class="picks" id="pain-picks"></div>
-  <p class="pain-result" id="pain-result" aria-live="polite"></p>
 
-  <h2>The products</h2>
-  <div class="toolbar">
-    <input id="search" type="search" placeholder="Search products, features…" aria-label="Search products">
-    <select id="group-filter" aria-label="Filter by group">
-      <option value="all">All groups</option>
-    </select>
-  </div>
-  <p class="result-count" id="result-count" aria-live="polite"></p>
-  <div class="grid" id="cards"></div>
+  <section class="console" aria-labelledby="pain-h">
+    <div class="console-head">
+      <h2 id="pain-h">What hurts?</h2>
+      <p>Pick the pain — the desk points at the tools built to fix it.</p>
+    </div>
+    <div class="picks" id="pain-picks"></div>
+    <p class="pain-result" id="pain-result" aria-live="polite"></p>
+  </section>
 
-  <h2>How they connect</h2>
-  <div class="flow" id="flow"></div>
+  <section aria-labelledby="products-h">
+    <div class="sec-head">
+      <h2 id="products-h">The products</h2>
+      <p>Four desks. Pick one, or search across all ten.</p>
+    </div>
+    <div class="group-tabs" id="group-tabs" role="tablist" aria-label="Filter by desk"></div>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Search products, features…" aria-label="Search products">
+      <select id="group-filter" aria-label="Filter by group">
+        <option value="all">All groups</option>
+      </select>
+    </div>
+    <p class="result-count" id="result-count" aria-live="polite"></p>
+    <div class="grid" id="cards"></div>
+  </section>
 
-  <h2 id="build-bundle">Build your bundle</h2>
-  <p class="lede">Check the products you'd actually buy. The hub quotes you against the Back-Office OS price — honestly, including when the bundle loses.</p>
+  <section aria-labelledby="flow-h">
+    <div class="sec-head">
+      <h2 id="flow-h">How they connect</h2>
+      <p>Four groups, one calm back office — the honest version.</p>
+    </div>
+    <div class="flow" id="flow"></div>
+  </section>
 
-  <h3 class="sub">Not sure where to start?</h3>
-  <p class="lede">Pick a business type — a sensible starting bundle loads into the builder, then adjust freely.</p>
-  <div class="picks" id="preset-picks"></div>
-  <p class="preset-desc-hint muted small">Hover a preset to see what it includes.</p>
+  <section aria-labelledby="build-h">
+    <div class="sec-head">
+      <h2 id="build-h">Build your bundle</h2>
+      <p>Check the products you'd actually buy. The hub quotes you against the Back-Office OS price — honestly, including when the bundle loses.</p>
+    </div>
+    <h3 class="sub-h">Not sure where to start?</h3>
+    <p class="lede">Pick a business type — a sensible starting bundle loads into the builder, then adjust freely.</p>
+    <div class="picks" id="preset-picks"></div>
+    <div class="builder-grid">
+      <div class="pick-list" id="pick-list"></div>
+      <div class="quote-panel">
+        <div class="quote" id="quote" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
 
-  <h2>Is it worth it?</h2>
-  <p class="lede">Your time has a price. Enter what one hour of your week is worth, then check the picks below — the hub prices the hours you'd get back against what the picks cost.</p>
-  <div class="toolbar">
-    <label class="small">My time is worth $
-      <input id="roi-rate" type="number" min="1" step="1" placeholder="50" style="width:5rem">
-      /hour
-    </label>
-    <button class="pick-btn" id="roi-go">Show me the math</button>
-  </div>
-  <div id="roi-result" aria-live="polite"></div>
+  <section class="console" aria-labelledby="roi-h">
+    <div class="console-head">
+      <h2 id="roi-h">Is it worth it?</h2>
+      <p>Your time has a price. Enter what one hour of your week is worth, then check the picks above — the desk prices the hours you'd get back against what the picks cost.</p>
+    </div>
+    <div class="toolbar">
+      <label class="roi-label">My time is worth $
+        <input id="roi-rate" type="number" min="1" step="1" placeholder="50">
+        /hour
+      </label>
+      <button class="pick-btn" id="roi-go" type="button">Show me the math</button>
+    </div>
+    <div id="roi-result" aria-live="polite"></div>
+  </section>
 
-  <h2>Compare two products</h2>
-  <p class="lede">Two products, side by side — features, price, and group.</p>
-  <div class="toolbar">
-    <select id="cmp-a" aria-label="Compare product A"></select>
-    <span class="small muted">vs</span>
-    <select id="cmp-b" aria-label="Compare product B"></select>
-  </div>
-  <div id="cmp-table"></div>
+  <section aria-labelledby="cmp-h">
+    <div class="sec-head">
+      <h2 id="cmp-h">Compare two products</h2>
+      <p>Two products, side by side — features, price, and group.</p>
+    </div>
+    <div class="toolbar">
+      <select id="cmp-a" aria-label="Compare product A"></select>
+      <span class="vs">vs</span>
+      <select id="cmp-b" aria-label="Compare product B"></select>
+    </div>
+    <div id="cmp-table"></div>
+  </section>
 
-  <div class="pick-list" id="pick-list"></div>
-  <div class="quote" id="quote" aria-live="polite"></div>
-
-  <h2>The bundle idea</h2>
-  <div class="bundle">
-    <p id="bundle-math"></p>
-    <p>A pitch, not a promise: each product stands alone and earns its keep on its own.</p>
-  </div>
+  <section aria-labelledby="bundle-h">
+    <div class="sec-head">
+      <h2 id="bundle-h">The bundle idea</h2>
+    </div>
+    <div class="ledger-card">
+      <div class="ledger-row"><span>Bought separately</span><strong>$203/mo</strong></div>
+      <div class="ledger-row ledger-total"><span>As "Back-Office OS"</span><strong>$139/mo</strong></div>
+      <div class="ledger-keep">You save $64/mo</div>
+      <p class="ledger-fine" id="bundle-math"></p>
+      <p class="ledger-fine">A pitch, not a promise: each product stands alone and earns its keep on its own.</p>
+    </div>
+  </section>
 </main>
-<footer>Built free, runs free — no servers, no accounts, no tracking.</footer>
+
+<footer>
+  <div class="wrap">
+    <p>Built free, runs free — no servers, no accounts, no tracking.</p>
+  </div>
+</footer>
+
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 </body>
