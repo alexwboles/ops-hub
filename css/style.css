@@ -61,3 +61,15 @@ footer { text-align:center; color:var(--muted); font-size:.85rem; padding:2rem 1
 .quote-line { font-size:.98rem; margin-bottom:.35rem; }
 .quote-verdict { font-size:1rem; font-weight:600; margin-top:.7rem; }
 .quote-verdict.bundle-wins { color:var(--accent); }
+
+/* ---------- second sweep: presets, ROI, compare ---------- */
+h3.sub { margin:1.4rem 0 .4rem; font-size:1.05rem; }
+.preset-desc { font-size:.92rem; color:var(--muted, #666); min-height:1.4em; }
+.roi-line { font-size:1rem; font-weight:600; padding:.9rem 1.1rem; border:2px solid var(--line); background:#fff; }
+.roi-line.roi-good { border-color:var(--good, #2c7a3d); }
+.roi-line.roi-bad { border-color:var(--accent); }
+.cmp-table { width:100%; border-collapse:collapse; background:#fff; margin-top:.6rem; }
+.cmp-table th, .cmp-table td { border:1px solid var(--line); padding:.55rem .7rem; text-align:left; vertical-align:top; font-size:.92rem; }
+.cmp-table th { width:9rem; background:var(--wash, #f7f5f1); }
+.cmp-table ul { margin:.2rem 0; padding-left:1.1rem; }
+.cmp-table li { margin-bottom:.25rem; }

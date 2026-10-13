@@ -158,6 +158,110 @@
       "Bought separately: $" + sum + "/mo. As \"" + d.BUNDLE.name + "\": " + d.BUNDLE.pitch + "." + savings;
   }
 
+  /* --- second sweep: presets, ROI calculator, product compare --------------- */
+  function renderPresets() {
+    var wrap = document.getElementById("preset-picks");
+    d.PRESETS.forEach(function (pr) {
+      var b = document.createElement("button");
+      b.className = "pick-btn";
+      b.textContent = pr.label;
+      b.title = pr.desc;
+      on(b, "click", function () { applyPreset(pr); });
+      wrap.appendChild(b);
+    });
+    var desc = document.createElement("p");
+    desc.className = "preset-desc";
+    desc.id = "preset-desc";
+    if (wrap.parentNode) wrap.parentNode.appendChild(desc);
+    on(wrap, "mouseover", function (e) {
+      var btn = e.target && e.target.classList && e.target.classList.contains("pick-btn") ? e.target : null;
+      if (btn) {
+        var pr = d.PRESETS.filter(function (p) { return p.label === btn.textContent; })[0];
+        if (pr) desc.textContent = pr.label + ": " + pr.desc;
+      }
+    });
+  }
+
+  function applyPreset(pr) {
+    var boxes = document.querySelectorAll("#pick-list input[type=checkbox]");
+    Array.prototype.forEach.call(boxes, function (box) {
+      box.checked = pr.slugs.indexOf(box.value) !== -1;
+    });
+    renderQuote();
+    document.getElementById("preset-desc").textContent =
+      pr.label + " loaded: " + pr.slugs.length + " products checked below — adjust freely.";
+    document.getElementById("build-bundle").scrollIntoView({ behavior: "smooth" });
+  }
+
+  function renderRoi() {
+    var box = document.getElementById("roi-result");
+    var btn = document.getElementById("roi-go");
+    on(btn, "click", function () {
+      var rate = document.getElementById("roi-rate").value;
+      var r = d.roiEstimate(rate, checkedSlugs());
+      box.innerHTML = "";
+      var p = document.createElement("p");
+      p.className = "roi-line";
+      if (!r.ok) {
+        p.textContent = r.reason;
+      } else {
+        p.textContent = "~" + r.hours + " hours/mo saved ≈ $" + Math.round(r.value) +
+          "/mo of your time. Picks cost $" + r.cost + "/mo. Net: " +
+          (r.net >= 0 ? "+$" : "−$") + Math.abs(Math.round(r.net)) + "/mo. " + r.verdict;
+        p.className += r.net >= 0 ? " roi-good" : " roi-bad";
+      }
+      box.appendChild(p);
+    });
+  }
+
+  function optionList(select, current) {
+    d.PRODUCTS.forEach(function (p) {
+      var o = document.createElement("option");
+      o.value = p.slug;
+      o.textContent = p.name + " ($" + p.price + "/mo)";
+      if (p.slug === current) o.selected = true;
+      select.appendChild(o);
+    });
+  }
+
+  function renderCompare() {
+    var aSel = document.getElementById("cmp-a");
+    var bSel = document.getElementById("cmp-b");
+    optionList(aSel, "invoicepilot-ai");
+    optionList(bSel, "triagepilot-ai");
+    function draw() {
+      var res = d.compareProducts(aSel.value, bSel.value);
+      var box = document.getElementById("cmp-table");
+      box.innerHTML = "";
+      if (!res.a || !res.b) return;
+      var tbl = document.createElement("table");
+      tbl.className = "cmp-table";
+      function row(label, a, b) {
+        var tr = document.createElement("tr");
+        var th = document.createElement("th"); th.textContent = label; tr.appendChild(th);
+        [a, b].forEach(function (v) {
+          var td = document.createElement("td");
+          if (Array.isArray(v)) {
+            var ul = document.createElement("ul");
+            v.forEach(function (f) { var li = document.createElement("li"); li.textContent = f; ul.appendChild(li); });
+            td.appendChild(ul);
+          } else td.textContent = v;
+          tr.appendChild(td);
+        });
+        tbl.appendChild(tr);
+      }
+      row("Product", res.a.name, res.b.name);
+      row("Tagline", res.a.tagline, res.b.tagline);
+      row("Price", "$" + res.a.price + "/mo", "$" + res.b.price + "/mo");
+      row("Group", d.groupOf(res.a.slug), d.groupOf(res.b.slug));
+      row("Key features", res.a.features, res.b.features);
+      box.appendChild(tbl);
+    }
+    on(aSel, "change", draw);
+    on(bSel, "change", draw);
+    draw();
+  }
+
   /* Scripts load at the end of <body>, so the DOM is ready now — no
    * DOMContentLoaded needed (also keeps the node fake-DOM harness happy). */
   (function init() {
@@ -165,7 +269,10 @@
     renderFilters();
     renderCards();
     renderFlow();
+    renderPresets();
     renderBuilder();
+    renderRoi();
+    renderCompare();
     renderBundle();
   })();
 })();

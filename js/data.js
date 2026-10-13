@@ -181,6 +181,72 @@
     return null;
   }
 
+  /* --- Second sweep: ROI + compare + presets ------------------------------------
+   * hoursSaved: honest monthly time-savings estimate (hours) for a typical
+   * small business owner actually using each product weekly.
+   */
+  var HOURS_SAVED = {
+    "invoicepilot-ai": 8, "cashflow-ai": 4, "hirewise-ai": 6, "onboardpilot-ai": 5,
+    "shiftplan-ai": 6, "sopforge-ai": 3, "signpilot-ai": 2, "bookpilot-ai": 4,
+    "triagepilot-ai": 6, "bizbrain-ai": 5
+  };
+
+  function hoursSavedFor(slugs) {
+    var sum = 0;
+    (slugs || []).forEach(function (s) { sum += HOURS_SAVED[s] || 0; });
+    return sum;
+  }
+
+  /* ROI: value of the hours saved at your hourly rate vs. the honest price
+   * of those picks (bundle-aware via quotePlan).
+   */
+  function roiEstimate(hourlyCost, slugs) {
+    var rate = Number(hourlyCost);
+    if (!(rate > 0)) return { ok: false, reason: "Enter an hourly value above $0." };
+    var picks = (slugs || []).filter(function (s) { return getProduct(s); });
+    if (!picks.length) return { ok: false, reason: "Pick at least one product first." };
+    var hours = hoursSavedFor(picks);
+    var value = hours * rate;
+    var quote = quotePlan(picks);
+    var cost = quote.effective;
+    var net = value - cost;
+    return {
+      ok: true, hours: hours, value: value, cost: cost, net: net,
+      multiple: cost > 0 ? value / cost : 0,
+      verdict: net >= 0
+        ? "Worth it: ~$" + Math.round(value) + "/mo of your time back for $" + cost + "/mo — a " + multipleStr(value / cost) + " return."
+        : "Not worth it at that rate: ~$" + Math.round(value) + "/mo of time saved vs $" + cost + "/mo cost."
+    };
+  }
+  function multipleStr(m) {
+    if (!isFinite(m)) return "∞×";
+    return (Math.round(m * 10) / 10) + "×";
+  }
+
+  /* Side-by-side product comparison. */
+  function compareProducts(slugA, slugB) {
+    return { a: getProduct(slugA), b: getProduct(slugB) };
+  }
+
+  /* Business-type presets: a sensible starting bundle, one click. */
+  var PRESETS = [
+    { key: "freelancer", label: "Solo freelancer",
+      desc: "Get paid, see cash, tame the inbox, get things signed — the one-person back office.",
+      slugs: ["invoicepilot-ai", "cashflow-ai", "triagepilot-ai", "signpilot-ai"] },
+    { key: "cafe", label: "Café / restaurant",
+      desc: "Staff the floor, fill the tables, and make “how we do things here” a checklist.",
+      slugs: ["shiftplan-ai", "bookpilot-ai", "sopforge-ai", "onboardpilot-ai", "cashflow-ai"] },
+    { key: "homeservices", label: "Home services crew",
+      desc: "Book the job, sign the work, bill the client, grow the team.",
+      slugs: ["bookpilot-ai", "signpilot-ai", "invoicepilot-ai", "hirewise-ai", "onboardpilot-ai"] }
+  ];
+  function presetSlugs(key) {
+    for (var i = 0; i < PRESETS.length; i++) {
+      if (PRESETS[i].key === key) return PRESETS[i].slugs.slice();
+    }
+    return [];
+  }
+
   /* --- Build-your-bundle quote ---------------------------------------------
    * Pick any subset; the quote tells you whether Back-Office OS ($139/mo)
    * beats buying your picks separately. Honest both ways.
@@ -246,9 +312,11 @@
   }
 
   return {
-    PRODUCTS: PRODUCTS, FLOW: FLOW, BUNDLE: BUNDLE, PAINS: PAINS,
+    PRODUCTS: PRODUCTS, FLOW: FLOW, BUNDLE: BUNDLE, PAINS: PAINS, PRESETS: PRESETS,
     repoUrl: repoUrl, bundlePrice: bundlePrice, groupOf: groupOf,
     allGroups: allGroups, getProduct: getProduct, quotePlan: quotePlan,
-    recommend: recommend, searchProducts: searchProducts
+    recommend: recommend, searchProducts: searchProducts,
+    roiEstimate: roiEstimate, hoursSavedFor: hoursSavedFor,
+    compareProducts: compareProducts, presetSlugs: presetSlugs
   };
 });

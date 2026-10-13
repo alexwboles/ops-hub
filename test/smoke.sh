@@ -47,9 +47,43 @@ done
 [ "$ALL_OK" -eq 1 ] && ok "README covers all 10 products" || bad "README product coverage"
 
 # new interactive sections present
-for id in pain-picks pain-result search group-filter result-count pick-list quote; do
+for id in pain-picks pain-result search group-filter result-count pick-list quote preset-picks roi-rate roi-go roi-result cmp-a cmp-b cmp-table; do
   grep -q "id=\"$id\"" "$DIR/index.html" && ok "index.html has #$id" || bad "index.html missing #$id"
 done
+
+# 11: second-sweep logic — presets, ROI, compare
+node -e "
+const d = require('$DIR/js/data.js');
+// presets
+if (d.PRESETS.length !== 3) process.exit(1);
+d.PRESETS.forEach(p => {
+  const slugs = d.presetSlugs(p.key);
+  if (slugs.length < 3) process.exit(1);
+  slugs.forEach(s => { if (!d.getProduct(s)) process.exit(1); });
+});
+if (d.presetSlugs('nope').length !== 0) process.exit(1);
+// ROI
+const all = d.PRODUCTS.map(p => p.slug);
+const r = d.roiEstimate(50, all);
+if (!r.ok) process.exit(1);
+const expectedHours = d.hoursSavedFor(all);
+if (r.hours !== expectedHours || r.value !== expectedHours * 50) process.exit(1);
+if (r.cost !== d.quotePlan(all).effective) process.exit(1);
+if (!r.verdict.includes('Worth it')) process.exit(1);
+const bad1 = d.roiEstimate(0, all);
+if (bad1.ok) process.exit(1);
+const bad2 = d.roiEstimate(50, []);
+if (bad2.ok) process.exit(1);
+const cheap = d.roiEstimate(5, ['signpilot-ai']);
+if (!cheap.ok || cheap.value !== 2 * 5) process.exit(1);
+// compare
+const c = d.compareProducts('invoicepilot-ai', 'cashflow-ai');
+if (!c.a || !c.b || c.a.slug !== 'invoicepilot-ai' || c.b.slug !== 'cashflow-ai') process.exit(1);
+if (c.a.price !== 19 || c.b.price !== 19) process.exit(1);
+const cn = d.compareProducts('invoicepilot-ai', 'nope');
+if (cn.b) process.exit(1);
+console.log('ok');
+" >/dev/null && ok "flow10: roiEstimate + compareProducts + presetSlugs" || bad "flow10"
 
 echo "--- smoke: $PASS passed, $FAIL failed ---"
 [ "$FAIL" -eq 0 ]

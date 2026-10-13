@@ -30,8 +30,34 @@
   <h2>How they connect</h2>
   <div class="flow" id="flow"></div>
 
-  <h2>Build your bundle</h2>
+  <h2 id="build-bundle">Build your bundle</h2>
   <p class="lede">Check the products you'd actually buy. The hub quotes you against the Back-Office OS price — honestly, including when the bundle loses.</p>
+
+  <h3 class="sub">Not sure where to start?</h3>
+  <p class="lede">Pick a business type — a sensible starting bundle loads into the builder, then adjust freely.</p>
+  <div class="picks" id="preset-picks"></div>
+  <p class="preset-desc-hint muted small">Hover a preset to see what it includes.</p>
+
+  <h2>Is it worth it?</h2>
+  <p class="lede">Your time has a price. Enter what one hour of your week is worth, then check the picks below — the hub prices the hours you'd get back against what the picks cost.</p>
+  <div class="toolbar">
+    <label class="small">My time is worth $
+      <input id="roi-rate" type="number" min="1" step="1" placeholder="50" style="width:5rem">
+      /hour
+    </label>
+    <button class="pick-btn" id="roi-go">Show me the math</button>
+  </div>
+  <div id="roi-result" aria-live="polite"></div>
+
+  <h2>Compare two products</h2>
+  <p class="lede">Two products, side by side — features, price, and group.</p>
+  <div class="toolbar">
+    <select id="cmp-a" aria-label="Compare product A"></select>
+    <span class="small muted">vs</span>
+    <select id="cmp-b" aria-label="Compare product B"></select>
+  </div>
+  <div id="cmp-table"></div>
+
   <div class="pick-list" id="pick-list"></div>
   <div class="quote" id="quote" aria-live="polite"></div>
 
